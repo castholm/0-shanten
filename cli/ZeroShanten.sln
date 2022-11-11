@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZeroShanten", "src\ZeroShanten\src\ZeroShanten.csproj", "{D6F656E5-4491-4E49-9719-59B0E9242824}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZeroShanten", "ZeroShanten\src\ZeroShanten.csproj", "{D6F656E5-4491-4E49-9719-59B0E9242824}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZeroShanten.SourceGeneration", "src\ZeroShanten.SourceGeneration\src\ZeroShanten.SourceGeneration.csproj", "{1CCEBCDD-6F60-436E-AB62-805829EC3B5E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZeroShanten.SourceGeneration", "ZeroShanten.SourceGeneration\src\ZeroShanten.SourceGeneration.csproj", "{1CCEBCDD-6F60-436E-AB62-805829EC3B5E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

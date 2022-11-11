@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "ZeroShanten": {
+      "commandName": "Project",
+      "commandLineArgs": "invoke ../../../examples/hello_world.0sh",
+      "workingDirectory": "."
+    }
+  }
+}

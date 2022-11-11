@@ -9,6 +9,7 @@ class Program
 {
     static async Task<int> Main(string[] args)
     {
+        Console.WriteLine(Directory.GetCurrentDirectory());
         var scriptFileArgument = new Argument<FileInfo>("SCRIPT", "The path to the script").ExistingOnly();
 
         var invokeCommand = new Command("invoke", "Invoke a script")
