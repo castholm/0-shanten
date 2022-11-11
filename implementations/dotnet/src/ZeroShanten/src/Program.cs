@@ -9,57 +9,101 @@ class Program
 {
     static async Task<int> Main(string[] args)
     {
-        var scriptFileArgument = new Argument<FileInfo>(
-            "SCRIPT",
-            "The path to the script to run")
-            .ExistingOnly();
+        var scriptFileArgument = new Argument<FileInfo>("SCRIPT", "The path to the script").ExistingOnly();
 
-        var rootCommand = new RootCommand("Executes a 0-shanten script")
+        var invokeCommand = new Command("invoke", "Invoke a script")
         {
             scriptFileArgument,
         };
-        rootCommand.SetHandler(async context =>
+        invokeCommand.SetHandler(async context =>
         {
             var scriptFile = context.ParseResult.GetValueForArgument(scriptFileArgument);
 
-            string scriptString;
+            var script = await LoadScript(scriptFile);
+            if (!script.IsValid)
             {
-                using var stream = scriptFile.OpenRead();
-                using var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: false);
-
-                scriptString = await reader.ReadToEndAsync();
-            }
-
-            try
-            {
-                var script = new Script(scriptString);
-
-                using var stdin = Console.OpenStandardInput();
-                using var stdout = Console.OpenStandardOutput();
-
-                script.Invoke(stdin, stdout);
-            }
-            catch (ScriptException e)
-            {
-                var scriptPath = Path.GetRelativePath(Directory.GetCurrentDirectory(), scriptFile.FullName);
-
-                Console.ResetColor();
-                Console.ForegroundColor = ConsoleColor.Red;
-
-                Console.Error.WriteLine($"{scriptPath}:{e.Message}");
-
-                Console.ResetColor();
+                WriteParseErrorsToConsole(scriptFile, script);
 
                 context.ExitCode = 1;
-
                 return;
+            }
+
+            using var stdin = Console.OpenStandardInput();
+            using var stdout = Console.OpenStandardOutput();
+            script.Invoke(stdin, stdout);
+        });
+
+        var checkCommand = new Command("check", "Check a script for errors")
+        {
+            scriptFileArgument,
+        };
+        checkCommand.SetHandler(async context =>
+        {
+            var scriptFile = context.ParseResult.GetValueForArgument(scriptFileArgument);
+
+            var script = await LoadScript(scriptFile);
+            if (!script.IsValid)
+            {
+                WriteParseErrorsToConsole(scriptFile, script);
+
+                context.ExitCode = 1;
             }
         });
 
-        var parser = new CommandLineBuilder(rootCommand)
-            .UseDefaults()
-            .Build();
+        var rootCommand = new RootCommand("Process 0-shanten scripts")
+        {
+            invokeCommand,
+            checkCommand,
+        };
 
-        return await parser.InvokeAsync(args);
+        return await new CommandLineBuilder(rootCommand)
+            .UseDefaults()
+            .Build()
+            .InvokeAsync(args);
+    }
+
+    static async Task<ZeroShantenScript> LoadScript(FileInfo scriptFile)
+    {
+        string scriptSource;
+        {
+            using var stream = scriptFile.OpenRead();
+            using var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: false);
+            scriptSource = await reader.ReadToEndAsync();
+        }
+
+        return ZeroShantenScript.Parse(scriptSource);
+    }
+
+    static void WriteParseErrorsToConsole(FileInfo scriptFile, ZeroShantenScript script)
+    {
+        var scriptPath = Path.GetRelativePath(Directory.GetCurrentDirectory(), scriptFile.FullName);
+        if (Path.DirectorySeparatorChar is '\\')
+        {
+            scriptPath = scriptPath.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        }
+
+        Console.ResetColor();
+        Console.ForegroundColor = ConsoleColor.Red;
+        foreach (var error in script.ParseErrors)
+        {
+            var errorPosition = (error.Line, error.Character) == (error.EndLine, error.EndCharacter)
+                ? $"{error.Line}:{error.Character}"
+                : $"{error.Line}:{error.Character}-{error.EndLine}:{error.EndCharacter}";
+            var errorMessage = error.Code switch
+            {
+                >= ParseErrorCode.HandIs1Shanten and <= ParseErrorCode.HandIs6Shanten =>
+                    $"hand is {(int)error.Code}-shanten",
+                ParseErrorCode.UnsupportedMahjongTileCharacter =>
+                    "unsupported mahjong tile character",
+                ParseErrorCode.HandContainsMoreThanFourCopiesOfATile =>
+                    "hand contains more than four copies of a tile",
+                ParseErrorCode.InstructionCountIsNotAMultipleOf13 =>
+                    "instruction count is not a multiple of 13",
+                _ =>
+                    "unknown error",
+            };
+            Console.Error.WriteLine($"{scriptPath}:{errorPosition}: error: {errorMessage}");
+        }
+        Console.ResetColor();
     }
 }
