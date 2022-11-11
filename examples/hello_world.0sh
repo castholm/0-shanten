@@ -16,7 +16,7 @@ followed by an LF character:
 inspired by riichi mahjong and uses only the following 35 characters
 from the Mahjong Tiles Unicode block:
 
-   🀫🀇🀈🀉🀊🀋🀌🀍🀎🀏🀙🀚🀛🀜🀝🀞🀟🀠🀡🀐🀑🀒🀓🀔🀕🀖🀗🀘🀀🀁🀂🀃🀆🀅🀄
+   🀫🀇🀈🀉🀊🀋🀌🀍🀎🀏🀙🀚🀛🀜🀝🀞🀟🀠🀡🀐🀑🀒🀓🀔🀕🀖🀗🀘🀀🀁🀂🀃🀆🀅🀄︎
 
 The 🀫 tile is special and begins a line comment. The other 34 tiles
 each specify an instruction to execute (unless commented out).  All
@@ -39,19 +39,19 @@ used.  The available instructions are as follows:
 
 🀫 🀀
    Pop the top two values from the stack, add the second value to the
-   first and push the sum to the stack.
+   first and push the sum.
 
 🀫 🀁
    Pop the top two values from the stack, subtract the second value from
-   the first and push the difference to the stack.
+   the first and push the difference.
 
 🀫 🀂
    Pop the top two values from the stack, multply the first value by the
-   second and push the product to the stack.
+   second and push the product.
 
 🀫 🀃
    Pop the top two values from the stack, divide the first value by the
-   second and push the quotient and remainder to the stack.
+   second and push the quotient and remainder.
 
 🀫 🀆
    Read the next byte from the input stream and push it to the stack.
@@ -59,7 +59,7 @@ used.  The available instructions are as follows:
 🀫 🀅
    Pop the top value from the stack and write it to the output stream.
 
-🀫 🀄
+🀫 🀄︎
    Pop the top two values from the stack and if the second value is
    greater than 0 then jump to an instruction determined by the first.
 
@@ -100,16 +100,16 @@ from that set:
 
    🀫 Seven Pairs: 🀈🀈 🀎🀎 🀚🀚 🀛🀛 🀕🀕 🀃🀃 🀅🀅
 
-   🀫 Thirteen Orphans: 🀇🀏🀙🀡🀐🀘🀀🀁🀂🀃🀆🀅🀄 🀏
+   🀫 Thirteen Orphans: 🀇🀏🀙🀡🀐🀘🀀🀁🀂🀃🀆🀅🀄︎ 🀏
 
 (In an actual game of riichi mahjong there are special circumstances
 where a complete hand may include groups of four tiles and contain more
 than 14 tiles in total, but for the purposes of this language we only
-consider 14-tile hands.  In riichi terms, we can say that these hands
-must be closed and must not have called kan.)
+consider 14-tile hands.  In riichi mahjong terms, we can say that these
+hands must be closed and must not have called kan.)
 
 While a complete hand contains 14 tiles, unless a player has just drawn
-and have yet to discard a tile, most of the time their hand will only
+and has yet to discard a tile, most of the time their hand will only
 contain 13 tiles.  A hand that can be completed just by drawing the
 correct 14th tile is said to be in tenpai:
 
@@ -117,13 +117,13 @@ correct 14th tile is said to be in tenpai:
 
    🀫 Tenpai hand: 🀙🀙🀙 🀛🀛🀛 🀑🀒🀓 🀘🀘 🀞🀠 (waiting on 🀟)
 
-   🀫 Tenpai hand: 🀍🀍 🀎🀎 🀞🀞 🀒🀒 🀀🀀 🀄🀄 🀃 (waiting on 🀃)
+   🀫 Tenpai hand: 🀍🀍 🀎🀎 🀞🀞 🀒🀒 🀀🀀 🀄︎🀄︎ 🀃 (waiting on 🀃)
 
 An important thing to note is that there are only four copies of each
-tile available, so a hand containing more than four copies of the same
-tile is invalid.  Furthermore, a hand such as the following is not in
-tenpai because it can only be completed by a nonexistent fifth copy of a
-tile it already has four copies of:
+tile available, so a hand can never contain more than four copies of the
+same tile.  Furthermore, a hand such as the following is not in tenpai
+because it can only be completed by a nonexistent fifth copy of a tile
+it already has four copies of:
 
    🀫 Not in tenpai: 🀊🀊🀊 🀚🀛🀜 🀜🀝🀞 🀂🀂🀂 🀊
 
@@ -145,7 +145,7 @@ stream.
 
 The next nine instruction do nothing meaningful and are only present to
 help fulfill the tenpai requirement.  We can more easily visually verify
-that these 13 tiles make a tenpai hand if we reorganize them:
+that the 13 tiles make a tenpai hand if we reorganize them:
 
    🀫 Tenpai hand: 🀇🀈🀉 🀇🀈🀉 🀍🀎🀏 🀂🀂🀂 🀅 (waiting on 🀅)
 
@@ -159,7 +159,7 @@ of using 0-shanten comes from needing to figure out how to express each
 step of a program in fewer than 13 instructions at a time, all while
 juggling only nine variables and "wasting" instructions for parity to
 produce tenpai hands.  In a sense, 0-shanten bears more similarities
-with challenging puzzle games than ordinary programming languages.
+with puzzle games than ordinary programming languages.
 
 Interested in learning more? For more detailed information about
 0-shanten as well as example programs and reference implementations,
