@@ -103,33 +103,19 @@ public static partial class Shanten
     static int GetThirteenOrphansShanten(ReadOnlySpan<int> tileCounts)
     {
         var shanten = 13
-            - (tileCounts[0] != 0 ? 1 : 0)
-            - (tileCounts[8] != 0 ? 1 : 0)
-            - (tileCounts[9] != 0 ? 1 : 0)
-            - (tileCounts[17] != 0 ? 1 : 0)
-            - (tileCounts[18] != 0 ? 1 : 0)
-            - (tileCounts[26] != 0 ? 1 : 0)
-            - (tileCounts[27] != 0 ? 1 : 0)
-            - (tileCounts[28] != 0 ? 1 : 0)
-            - (tileCounts[29] != 0 ? 1 : 0)
-            - (tileCounts[30] != 0 ? 1 : 0)
-            - (tileCounts[31] != 0 ? 1 : 0)
-            - (tileCounts[32] != 0 ? 1 : 0)
-            - (tileCounts[33] != 0 ? 1 : 0);
+            - (tileCounts[0] != 0 ? 1 : 0) - (tileCounts[8] != 0 ? 1 : 0)
+            - (tileCounts[9] != 0 ? 1 : 0) - (tileCounts[17] != 0 ? 1 : 0)
+            - (tileCounts[18] != 0 ? 1 : 0) - (tileCounts[26] != 0 ? 1 : 0)
+            - (tileCounts[27] != 0 ? 1 : 0) - (tileCounts[28] != 0 ? 1 : 0)
+            - (tileCounts[29] != 0 ? 1 : 0) - (tileCounts[30] != 0 ? 1 : 0)
+            - (tileCounts[31] != 0 ? 1 : 0) - (tileCounts[32] != 0 ? 1 : 0) - (tileCounts[33] != 0 ? 1 : 0);
         if (
-            tileCounts[0] >= 2
-                || tileCounts[8] >= 2
-                || tileCounts[9] >= 2
-                || tileCounts[17] >= 2
-                || tileCounts[18] >= 2
-                || tileCounts[26] >= 2
-                || tileCounts[27] >= 2
-                || tileCounts[28] >= 2
-                || tileCounts[29] >= 2
-                || tileCounts[30] >= 2
-                || tileCounts[31] >= 2
-                || tileCounts[32] >= 2
-                || tileCounts[33] >= 2)
+            tileCounts[0] >= 2 || tileCounts[8] >= 2
+                || tileCounts[9] >= 2 || tileCounts[17] >= 2
+                || tileCounts[18] >= 2 || tileCounts[26] >= 2
+                || tileCounts[27] >= 2 || tileCounts[28] >= 2
+                || tileCounts[29] >= 2 || tileCounts[30] >= 2
+                || tileCounts[31] >= 2 || tileCounts[32] >= 2 || tileCounts[33] >= 2)
         {
             shanten--;
         }
@@ -177,11 +163,11 @@ public static partial class Shanten
     static int IntegerEncodeTileCounts(int a, int b, int c, int d, int e, int f, int g, int h = 0, int i = 0) =>
         1 * a + 5 * b + 25 * c + 125 * d + 625 * e + 3125 * f + 15_625 * g + 78_125 * h + 390_625 * i;
 
-    static (Diff NoPair, Diff Pair) GetNumberedDiffs(int encodedTileCounts)
-        => GetDiffs(encodedTileCounts, LookupTables.Numbered);
+    static (Diff NoPair, Diff Pair) GetNumberedDiffs(int encodedTileCounts) =>
+        GetDiffs(encodedTileCounts, LookupTables.Numbered);
 
-    static (Diff NoPair, Diff Pair) GetHonorDiffs(int encodedTileCounts)
-        => GetDiffs(encodedTileCounts, LookupTables.Honor);
+    static (Diff NoPair, Diff Pair) GetHonorDiffs(int encodedTileCounts) =>
+        GetDiffs(encodedTileCounts, LookupTables.Honor);
 
     static (Diff NoPair, Diff Pair) GetDiffs(int encodedTileCounts, ushort[] lut)
     {

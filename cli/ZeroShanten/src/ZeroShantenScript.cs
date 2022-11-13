@@ -40,12 +40,10 @@ public partial class ZeroShantenScript
         var variables = (stackalloc int[9]);
         var stack = (stackalloc int[13]);
         var stackTop = 0;
-
-        var hand = 0;
-        var tile = 0;
-        while (hand * 13 + tile >= 0 && hand * 13 + tile < _instructions.Length)
+        var pc = 0;
+        while ((uint)pc < (uint)_instructions.Length)
         {
-            var instruction = _instructions[hand * 13 + tile];
+            var instruction = _instructions[pc++];
             switch (instruction)
             {
             case >= Instructions.Rc1 and <= Instructions.Rc9:
@@ -117,20 +115,7 @@ public partial class ZeroShantenScript
                 }
                 break;
             case Instructions.Rio:
-                int readByte;
-                if (input is null)
-                {
-                    readByte = -1;
-                }
-                else
-                {
-                    readByte = input.ReadByte();
-                    if (readByte == -1)
-                    {
-                        input = null; // Never read from this stream again even if more data becomes available.
-                    }
-                }
-                stack[stackTop++] = readByte;
+                stack[stackTop++] = input?.ReadByte() ?? -1;
                 break;
             case Instructions.Wio:
                 if (stackTop >= 1)
@@ -141,11 +126,10 @@ public partial class ZeroShantenScript
             case Instructions.Jgz:
                 if (stackTop >= 2)
                 {
-                    var (x, t) = (stack[--stackTop], stack[--stackTop]);
+                    var (t, x) = (stack[--stackTop], stack[--stackTop]);
                     if (x > 0)
                     {
-                        hand += t;
-                        tile = -1;
+                        pc = (pc / 13 + t) * 13;
                     }
                 }
                 break;
@@ -154,76 +138,51 @@ public partial class ZeroShantenScript
                 break;
             }
 
-            tile++;
-            if (tile >= 13)
+            if (pc % 13 == 0)
             {
                 stackTop = 0;
-                hand += 1;
-                tile = 0;
             }
         }
     }
 
     static class Instructions
     {
-        public const int Rc1 = 11;
-        public const int Rc2 = 12;
-        public const int Rc3 = 13;
-        public const int Rc4 = 14;
-        public const int Rc5 = 15;
-        public const int Rc6 = 16;
-        public const int Rc7 = 17;
-        public const int Rc8 = 18;
-        public const int Rc9 = 19;
+        public const int Rc1 = 1;
+        public const int Rc2 = 2;
+        public const int Rc3 = 3;
+        public const int Rc4 = 4;
+        public const int Rc5 = 5;
+        public const int Rc6 = 6;
+        public const int Rc7 = 7;
+        public const int Rc8 = 8;
+        public const int Rc9 = 9;
 
-        public const int Rv1 = 21;
-        public const int Rv2 = 22;
-        public const int Rv3 = 23;
-        public const int Rv4 = 24;
-        public const int Rv5 = 25;
-        public const int Rv6 = 26;
-        public const int Rv7 = 27;
-        public const int Rv8 = 28;
-        public const int Rv9 = 29;
+        public const int Rv1 = 10;
+        public const int Rv2 = 11;
+        public const int Rv3 = 12;
+        public const int Rv4 = 13;
+        public const int Rv5 = 14;
+        public const int Rv6 = 15;
+        public const int Rv7 = 16;
+        public const int Rv8 = 17;
+        public const int Rv9 = 18;
 
-        public const int Wv1 = 31;
-        public const int Wv2 = 32;
-        public const int Wv3 = 33;
-        public const int Wv4 = 34;
-        public const int Wv5 = 35;
-        public const int Wv6 = 36;
-        public const int Wv7 = 37;
-        public const int Wv8 = 38;
-        public const int Wv9 = 39;
+        public const int Wv1 = 19;
+        public const int Wv2 = 20;
+        public const int Wv3 = 21;
+        public const int Wv4 = 22;
+        public const int Wv5 = 23;
+        public const int Wv6 = 24;
+        public const int Wv7 = 25;
+        public const int Wv8 = 26;
+        public const int Wv9 = 27;
 
-        public const int Add = 41;
-        public const int Sub = 42;
-        public const int Mul = 43;
-        public const int Div = 44;
-        public const int Rio = 45;
-        public const int Wio = 46;
-        public const int Jgz = 47;
-    }
-}
-
-[Serializable]
-public class ZeroShantenScriptException : FormatException
-{
-    public ZeroShantenScriptException()
-    {
-    }
-
-    public ZeroShantenScriptException(string message) : base(message)
-    {
-    }
-
-    public ZeroShantenScriptException(string message, Exception inner) : base(message, inner)
-    {
-    }
-
-    protected ZeroShantenScriptException(
-        System.Runtime.Serialization.SerializationInfo info,
-        System.Runtime.Serialization.StreamingContext context) : base(info, context)
-    {
+        public const int Add = 28;
+        public const int Sub = 29;
+        public const int Mul = 30;
+        public const int Div = 31;
+        public const int Rio = 32;
+        public const int Wio = 33;
+        public const int Jgz = 34;
     }
 }

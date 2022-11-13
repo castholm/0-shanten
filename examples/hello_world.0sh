@@ -1,16 +1,13 @@
-This is a 0-shanten program that outputs the string "Hello, world!"
+This is a 0-shanten program that outputs the string "Hello, World!"
 followed by an LF character:
 
-   🀎🀏🀂🀅🀇🀇🀈🀈🀉🀉🀍🀂🀂 H
-   🀊🀋🀂🀋🀂🀇🀀🀅🀇🀈🀈🀊🀀 e
-   🀈🀌🀂🀏🀂🀐🀙🀅🀙🀅🀈🀌🀏 ll
-   🀙🀑🀙🀉🀀🀑🀚🀅🀇🀇🀉🀚🀀 o
-   🀙🀎🀎🀂🀃🀅🀇🀇🀈🀈🀙🀂🀃 ,
-   🀈🀈🀂🀎🀂🀒🀛🀅🀇🀇🀎🀛🀒 %20
-   🀚🀎🀀🀅🀚🀅🀇🀇🀌🀍🀚🀀🀀 wo
-   🀙🀌🀀🀅🀙🀅🀇🀇🀊🀋🀙🀀🀀 rl
-   🀙🀎🀁🀅🀇🀇🀈🀈🀉🀉🀎🀙🀁 d
-   🀉🀎🀀🀉🀂🀅🀈🀎🀀🀅🀇🀇🀈 !%0A
+   🀎🀏🀂🀅🀉🀎🀀🀏🀂🀈🀀🀅🀉 He
+   🀏🀏🀀🀌🀂🀐🀙🀅🀙🀅🀀🀌🀂 ll
+   🀙🀉🀀🀅🀉🀎🀀🀊🀂🀅🀙🀎🀊 o,
+   🀊🀎🀂🀅🀏🀏🀂🀌🀀🀅🀊🀎🀌 %20W
+   🀙🀉🀀🀅🀙🀉🀀🀉🀀🀅🀙🀅🀇 orl
+   🀙🀎🀁🀅🀉🀎🀀🀉🀂🀅🀙🀁🀀 d!
+   🀇🀈🀀🀉🀀🀊🀀🀅🀋🀌🀍🀎🀏 %0A
 
 0-shanten is a stack-based esoteric programming language that is
 inspired by riichi mahjong and uses only the following 35 characters
@@ -18,13 +15,13 @@ from the Mahjong Tiles Unicode block:
 
    🀫🀇🀈🀉🀊🀋🀌🀍🀎🀏🀙🀚🀛🀜🀝🀞🀟🀠🀡🀐🀑🀒🀓🀔🀕🀖🀗🀘🀀🀁🀂🀃🀆🀅🀄︎
 
-The 🀫 tile is special and begins a line comment. The other 34 tiles
+The 🀫 tile is special and begins a line comment.  The other 34 tiles
 each specify an instruction to execute (unless commented out).  All
 characters outside the Mahjong Tiles block are ignored.
 
 To execute a program, a program counter, an evaluation stack, nine
 variables, an optional input stream and an optional output stream are
-used.  The available instructions are as follows:
+used.  The instruction set is as follows:
 
 🀫 🀇🀈🀉🀊🀋🀌🀍🀎🀏
    Push the tile's numeric value to the stack.
@@ -54,20 +51,20 @@ used.  The available instructions are as follows:
    second and push the quotient and remainder.
 
 🀫 🀆
-   Read the next byte from the input stream and push it to the stack.
+   Read the next value from the input stream and push it to the stack.
 
 🀫 🀅
    Pop the top value from the stack and write it to the output stream.
 
 🀫 🀄︎
-   Pop the top two values from the stack and if the second value is
-   greater than 0 then jump to an instruction determined by the first.
+   Pop the top two values from the stack and if the first value is
+   greater than 0 then jump to an instruction determined by the second.
 
 Instructions that pop values from the stack do nothing if the stack
 contains fewer than the required number of values.
 
-As it turns out, this instruction set alone does not make for an
-interesting enough language, so to spice things up, we place a number of
+As cute as this instruction set is, it does not make for an interesting
+enough language on its own, so to spice things up we place a number of
 additional constraints on programs:
 
 o  The total instruction count of a program must be a multiple of 13.
@@ -84,8 +81,8 @@ understand how a mahjong hand is composed.
 A game of riichi mahjong revolves around players taking turns drawing
 and discarding tiles until one of them forms a complete hand.  A
 standard complete hand consists of four groups of three tiles each and a
-pair, making for a total of 14 tiles.  A tile group is either a
-same-suit triplet or a same-suit sequence of consequtive numbers.
+pair, making for a total of 14 tiles.  A tile group is either a same-
+suit sequence of consequtive numbers or a same-suit triplet.
 
    🀫 Standard hand: 🀇🀈🀉 🀞🀞🀞 🀕🀖🀗 🀀🀀🀀 🀠🀠
 
@@ -103,10 +100,10 @@ from that set:
    🀫 Thirteen Orphans: 🀇🀏🀙🀡🀐🀘🀀🀁🀂🀃🀆🀅🀄︎ 🀏
 
 (In an actual game of riichi mahjong there are special circumstances
-where a complete hand may include groups of four tiles and contain more
-than 14 tiles in total, but for the purposes of this language we only
-consider 14-tile hands.  In riichi mahjong terms, we can say that these
-hands must be closed and must not have called kan.)
+where a complete hand may include groups of four tiles and thus contain
+more than 14 tiles in total, but for the purposes of this language we
+only consider 14-tile hands.  In riichi mahjong terms, we can say that
+these hands must not have called kan.)
 
 While a complete hand contains 14 tiles, unless a player has just drawn
 and has yet to discard a tile, most of the time their hand will only
@@ -121,7 +118,7 @@ correct 14th tile is said to be in tenpai:
 
 An important thing to note is that there are only four copies of each
 tile available, so a hand can never contain more than four copies of the
-same tile.  Furthermore, a hand such as the following is not in tenpai
+same tile.  Therefore, a hand such as the following is not in tenpai
 because it can only be completed by a nonexistent fifth copy of a tile
 it already has four copies of:
 
@@ -135,7 +132,7 @@ hand has a shanten count of 0, which is what the name of this language,
 Now that we know the instruction set and understand tenpai, let's review
 the very first line of code in the program near the top of this file:
 
-   🀫  1  🀎🀏🀂🀅🀇🀇🀈🀈🀉🀉🀍🀂🀂 H
+   🀫 🀎🀏🀂🀅🀉🀎🀀🀏🀂🀈🀀🀅🀉 He
 
 The first two instructions push the values 8 and 9 to the stack.  The
 third instruction pops these two values, multiplies them and pushes the
@@ -143,24 +140,26 @@ result (72, which is the code point of the character H) to the stack.
 The fourth instruction pops this result and writes it to the output
 stream.
 
-The next nine instruction do nothing meaningful and are only present to
-help fulfill the tenpai requirement.  We can more easily visually verify
-that the 13 tiles make a tenpai hand if we reorganize them:
+The following eight instructions calculate (3 + 8) * 9 + 2 and write the
+result to the output stream.  The final 13th instruction does nothing
+meaningful (it pushes the value 3 to the stack) and is only present to
+meet the tenpai requirement.  We can more easily visually verify that
+the 13 tiles make a tenpai hand by reorganizing them:
 
-   🀫 Tenpai hand: 🀇🀈🀉 🀇🀈🀉 🀍🀎🀏 🀂🀂🀂 🀅 (waiting on 🀅)
+   🀫 Tenpai hand: 🀉🀉 🀎🀎 🀏🀏 🀀🀀 🀂🀂 🀅🀅 🀈 (waiting on 🀈)
 
 After these 13 instructions have been processed, whatever values are
 still in the evaluation stack are dropped and we move on to the next 13
-instructions. See if you can understand what the remainder of the
-program does yourself!
+instructions.  See if you can figure out how the remainder of the
+program works on your own!
 
 As you may have (hopefully) realized by now, the difficulty (and fun!)
 of using 0-shanten comes from needing to figure out how to express each
 step of a program in fewer than 13 instructions at a time, all while
 juggling only nine variables and "wasting" instructions for parity to
-produce tenpai hands.  In a sense, 0-shanten bears more similarities
-with puzzle games than ordinary programming languages.
+form tenpai hands.  In a sense, 0-shanten bears more similarities with
+puzzle games than ordinary programming languages.
 
-Interested in learning more? For more detailed information about
-0-shanten as well as example programs and reference implementations,
+Interested in learning more about 0-shanten? For more information about
+the language as well as example programs and reference implementations,
 visit: <https://github.com/castholm/0-shanten>

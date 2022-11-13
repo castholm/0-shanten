@@ -9,17 +9,12 @@ class Program
 {
     static async Task<int> Main(string[] args)
     {
-        Console.WriteLine(Directory.GetCurrentDirectory());
         var scriptFileArgument = new Argument<FileInfo>("SCRIPT", "The path to the script").ExistingOnly();
 
-        var invokeCommand = new Command("invoke", "Invoke a script")
-        {
-            scriptFileArgument,
-        };
+        var invokeCommand = new Command("invoke", "Invoke a script") { scriptFileArgument };
         invokeCommand.SetHandler(async context =>
         {
             var scriptFile = context.ParseResult.GetValueForArgument(scriptFileArgument);
-
             var script = await LoadScript(scriptFile);
             if (!script.IsValid)
             {
@@ -34,14 +29,10 @@ class Program
             script.Invoke(stdin, stdout);
         });
 
-        var checkCommand = new Command("check", "Check a script for errors")
-        {
-            scriptFileArgument,
-        };
+        var checkCommand = new Command("check", "Check a script for errors") { scriptFileArgument };
         checkCommand.SetHandler(async context =>
         {
             var scriptFile = context.ParseResult.GetValueForArgument(scriptFileArgument);
-
             var script = await LoadScript(scriptFile);
             if (!script.IsValid)
             {
@@ -92,14 +83,14 @@ class Program
                 : $"{error.Line}:{error.Character}-{error.EndLine}:{error.EndCharacter}";
             var errorMessage = error.Code switch
             {
-                >= ParseErrorCode.HandIs1Shanten and <= ParseErrorCode.HandIs6Shanten =>
-                    $"hand is {(int)error.Code}-shanten",
-                ParseErrorCode.UnsupportedMahjongTileCharacter =>
-                    "unsupported mahjong tile character",
-                ParseErrorCode.HandContainsMoreThanFourCopiesOfATile =>
-                    "hand contains more than four copies of a tile",
                 ParseErrorCode.InstructionCountIsNotAMultipleOf13 =>
                     "instruction count is not a multiple of 13",
+                >= ParseErrorCode.HandIs1Shanten and <= ParseErrorCode.HandIs6Shanten =>
+                    $"hand is {(int)error.Code}-shanten",
+                ParseErrorCode.HandContainsMoreThanFourCopiesOfATile =>
+                    "hand contains more than four copies of a tile",
+                ParseErrorCode.HandContainsUnsupportedTiles =>
+                    "hand contains unsupported tiles",
                 _ =>
                     "unknown error",
             };

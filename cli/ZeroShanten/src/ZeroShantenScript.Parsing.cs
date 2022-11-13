@@ -27,12 +27,10 @@ public partial class ZeroShantenScript
         var cr = false;
         var commentedOut = false;
 
-        var currentHandTileCounts = (stackalloc int[34]);
+        var currentHandTileCounts = (stackalloc int[35]); // 34 for supported tiles, 1 for unsupported tiles.
         var currentHandTotalTileCount = 0;
         var currentHandStartLine = line;
         var currentHandStartCharacter = character;
-
-        var sourceContainsUnsupportedCharacters = false;
 
         var runeEnumerator = source.EnumerateRunes();
         while (runeEnumerator.MoveNext())
@@ -62,35 +60,28 @@ public partial class ZeroShantenScript
                     goto default;
                 }
 
-                var kind = codePoint switch
+                var kindIndex = codePoint switch
                 {
                     >= CodePoints.Man1 and <= CodePoints.Man9 => codePoint - CodePoints.Man1 + 0,
                     >= CodePoints.Pin1 and <= CodePoints.Pin9 => codePoint - CodePoints.Pin1 + 9,
                     >= CodePoints.Sou1 and <= CodePoints.Sou9 => codePoint - CodePoints.Sou1 + 18,
                     >= CodePoints.East and <= CodePoints.North => codePoint - CodePoints.East + 27,
                     >= CodePoints.Red and <= CodePoints.White => -codePoint + CodePoints.White + 31,
-                    _ => -1,
+                    _ => 34,
                 };
-                if (kind == -1)
-                {
-                    (parseErrors ??= new List<ParseError>()).Add(new ParseError(
-                        ParseErrorCode.UnsupportedMahjongTileCharacter,
-                        line, character,
-                        line, character));
-                    sourceContainsUnsupportedCharacters = true;
-                    goto default;
-                }
-                currentHandTileCounts[kind]++;
+                currentHandTileCounts[kindIndex]++;
+                currentHandTotalTileCount++;
 
-                if (currentHandTotalTileCount == 0)
+                if (currentHandTotalTileCount == 1)
                 {
                     currentHandStartLine = line;
                     currentHandStartCharacter = character;
                 }
-                currentHandTotalTileCount++;
-                if (currentHandTotalTileCount >= 13)
+                else if (currentHandTotalTileCount == 13)
                 {
-                    foreach (var tileCount in currentHandTileCounts)
+                    var canCheckShanten = true;
+
+                    foreach (var tileCount in currentHandTileCounts[..34])
                     {
                         if (tileCount > 4)
                         {
@@ -98,13 +89,22 @@ public partial class ZeroShantenScript
                                 ParseErrorCode.HandContainsMoreThanFourCopiesOfATile,
                                 currentHandStartLine, currentHandStartCharacter,
                                 line, character));
-                            goto ClearHand;
+                            canCheckShanten = false;
+                            break;
                         }
                     }
-
-                    if (!sourceContainsUnsupportedCharacters)
+                    if (currentHandTileCounts[34] != 0)
                     {
-                        var shanten = Shanten.GetShanten(currentHandTileCounts);
+                        (parseErrors ??= new List<ParseError>()).Add(new ParseError(
+                            ParseErrorCode.HandContainsUnsupportedTiles,
+                            currentHandStartLine, currentHandStartCharacter,
+                            line, character));
+                        canCheckShanten = false;
+                    }
+
+                    if (canCheckShanten)
+                    {
+                        var shanten = Shanten.GetShanten(currentHandTileCounts[..34]);
                         if (shanten != 0)
                         {
                             (parseErrors ??= new List<ParseError>()).Add(new ParseError(
@@ -114,7 +114,6 @@ public partial class ZeroShantenScript
                         }
                     }
 
-                ClearHand:
                     currentHandTileCounts.Clear();
                     currentHandTotalTileCount = 0;
                 }
@@ -129,33 +128,24 @@ public partial class ZeroShantenScript
         }
         character++;
 
-        // It is undefined whether unsupported characters should count as tiles or be ignored for the purposes of
-        // grouping tiles into hands and counting instructions. If the script contains unsupported characters, all
-        // other types of errors are meaningless and should be excluded.
-        if (sourceContainsUnsupportedCharacters)
+        // We only report shanten errors when the instruction count is a multiple of 13 in order to improve the user
+        // experience when the user has set up this tool to continually check for errors while they are typing. Doing
+        // otherwise would result in a cascade of shanten errors when the user is making modifications anywhere but
+        // near the very end of the script, which wouldn't be very helpful.
+        if (instructionCount % 13 != 0)
         {
-            parseErrors!.RemoveAll(x => x.Code is not ParseErrorCode.UnsupportedMahjongTileCharacter);
-        }
-        else
-        {
-            // The instruction count must be a multiple of 13 for shanten errors to be meaningful, otherwise
-            // continually checking for errors while the user is actively editing a script would result in a cascade
-            // of errors. Therefore we exclude all other types of errors.
-            if (instructionCount % 13 != 0)
+            if (parseErrors is null)
             {
-                if (parseErrors is null)
-                {
-                    parseErrors = new List<ParseError>(1);
-                }
-                else
-                {
-                    parseErrors.Clear();
-                }
-                parseErrors.Add(new ParseError(
-                    ParseErrorCode.InstructionCountIsNotAMultipleOf13,
-                    line, character,
-                    line, character));
+                parseErrors = new List<ParseError>(1);
             }
+            else
+            {
+                parseErrors.Clear();
+            }
+            parseErrors.Add(new ParseError(
+                ParseErrorCode.InstructionCountIsNotAMultipleOf13,
+                line, character,
+                line, character));
         }
 
         return instructionCount;
@@ -263,7 +253,7 @@ public readonly record struct ParseError(
 
 public enum ParseErrorCode
 {
-    Unknown = 0,
+    InstructionCountIsNotAMultipleOf13 = 0,
     HandIs1Shanten = 1,
     HandIs2Shanten = 2,
     HandIs3Shanten = 3,
@@ -271,6 +261,5 @@ public enum ParseErrorCode
     HandIs5Shanten = 5,
     HandIs6Shanten = 6,
     HandContainsMoreThanFourCopiesOfATile = 7,
-    UnsupportedMahjongTileCharacter = 8,
-    InstructionCountIsNotAMultipleOf13 = 9,
+    HandContainsUnsupportedTiles = 8,
 }

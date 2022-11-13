@@ -31,7 +31,7 @@ public class ShantenLookupTableGenerator : IIncrementalGenerator
     {
         var buffer = new ushort[Math.Max(MaxIntegerEncodedNumberedTileCounts, MaxIntegerEncodedHonorTileCounts) + 1];
 
-        // Optimal capacities were obtained by debugging.
+        // Optimal capacities obtained by debugging.
         var queue = new Queue<QueueItem>(2_291_406);
         var sb = new StringBuilder(11_168_081, 11_168_081);
 
@@ -50,12 +50,17 @@ public class ShantenLookupTableGenerator : IIncrementalGenerator
 
     readonly struct QueueItem
     {
-        // Represents the number of copies of each kind of tile of a particular suit. Bits 0-2 represent the
-        // number of ones (or east tiles), bits 3-5 the number of twos (or south tiles), bits 6-8 the number of
-        // threes (or west tiles) and so on.
+        /// <summary>
+        /// Represents the number of copies of each kind of tile of a particular suit. Bits 0-2 represent the number
+        /// of ones (or east tiles), bits 3-5 the number of twos (or south tiles), bits 6-8 the number of threes (or
+        /// west tiles) and so on.
+        /// </summary>
         public readonly uint TileCounts;
 
-        // Bits 0-3 represent the insertion count and bits 4-7 the deletion count.
+        /// <summary>
+        /// Represents the insertion and deletion counts. Bits 0-3 represent the insertion count and bits 4-7 the
+        /// deletion count.
+        /// </summary>
         public readonly uint Diff;
 
         public QueueItem(uint tileCounts, uint diff = 0)
