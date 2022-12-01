@@ -1,4 +1,4 @@
-This is a 0-shanten program that outputs the string "Hello, World!"
+This is a 0-shanten program that outputs the message "Hello, World!"
 followed by an LF character:
 
    🀎🀏🀂🀅🀉🀎🀀🀏🀂🀈🀀🀅🀉 He
@@ -63,11 +63,11 @@ used.  The instruction set is as follows:
 Instructions that pop values from the stack do nothing if the stack
 contains fewer than the required number of values.
 
-As cute as this instruction set is, it does not make for an interesting
-enough language on its own, so to spice things up we place a number of
+As cute as this instruction set is it does not make for an interesting
+enough language on its own, so to spice things we also place a few
 additional constraints on programs:
 
-o  The total instruction count of a program must be a multiple of 13.
+o  The total instruction count must be a multiple of 13.
 
 o  The evaluation stack is cleared every time the program counter
    becomes a multiple of 13.
@@ -76,7 +76,7 @@ o  Each consecutive group of 13 tiles must form a valid mahjong hand
    that is in tenpai.
 
 "Wtf is tenpai?", you probably ask.  To answer this, it helps to first
-understand how a mahjong hand is composed.
+understand what a mahjong hand is and how it is composed.
 
 A game of riichi mahjong revolves around players taking turns drawing
 and discarding tiles until one of them forms a complete hand.  A
@@ -106,9 +106,9 @@ only consider 14-tile hands.  In riichi mahjong terms, we can say that
 these hands must not have called kan.)
 
 While a complete hand contains 14 tiles, unless a player has just drawn
-and has yet to discard a tile, most of the time their hand will only
-contain 13 tiles.  A hand that can be completed just by drawing the
-correct 14th tile is said to be in tenpai:
+and has yet to discard a tile their hand will only contain 13 tiles.  A
+hand that can be completed just by drawing the correct 14th tile is said
+to be in tenpai:
 
    🀫 Tenpai hand: 🀊🀊🀊 🀚🀛🀜 🀜🀝🀞 🀂🀂 🀓🀔 (waiting on 🀒 or 🀕)
 
@@ -140,11 +140,12 @@ result (72, which is the code point of the character H) to the stack.
 The fourth instruction pops this result and writes it to the output
 stream.
 
-The following eight instructions calculate (3 + 8) * 9 + 2 and write the
-result to the output stream.  The final 13th instruction does nothing
-meaningful (it pushes the value 3 to the stack) and is only present to
-meet the tenpai requirement.  We can more easily visually verify that
-the 13 tiles make a tenpai hand by reorganizing them:
+Similarly, the following eight instructions calculate (3 + 8) * 9 + 2
+for the character e and write the result to the output stream.  The
+final 13th instruction does nothing meaningful (it pushes the value 3 to
+the stack) and is only present to meet the tenpai requirement.  We can
+more easily visually verify that the 13 tiles make a tenpai hand by
+reorganizing them:
 
    🀫 Tenpai hand: 🀉🀉 🀎🀎 🀏🀏 🀀🀀 🀂🀂 🀅🀅 🀈 (waiting on 🀈)
 
